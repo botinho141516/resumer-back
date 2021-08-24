@@ -14,7 +14,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "pdfreader": "^1.2.10",
+    "pdf.js-extract": "^0.1.5",
     "puppeteer": "^10.2.0"
   }
 }

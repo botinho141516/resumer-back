@@ -1,43 +1,25 @@
-import { readPdf } from "./pdf/pdf";
-import { getResume, goToResoomer, startPuppeteer } from "./puppeteer/puppeteer";
+import { initControllers } from "./controllers/controllers";
+import { initPuppeteer } from "./controllers/puppeteer/puppeteer";
+import { initResoomerPuppeteer } from "./controllers/puppeteer/resoomer";
+import { initRoutes } from "./routes";
+import { initServer } from "./server";
 
 export interface DefaultReturn<T> {
   error?: string;
   result?: T;
 }
 
+const puppeteer = initPuppeteer();
+const resoomer = initResoomerPuppeteer();
+const controllers = initControllers({ puppeteer, resoomer });
 
-
-const main = async () => {
-  const { error: startPuppeteerError, result: browser } = await startPuppeteer();
-
-  if (startPuppeteerError) {
-    throw new Error(startPuppeteerError);
-  }
-
-  const { error: readPdfError, result: pdfContent } = readPdf();
-
-  if (readPdfError) {
-    throw new Error(readPdfError);
-  }
-
-  const { error: goToResoomerError, result: page } = await goToResoomer(browser);
-
-
-  if (goToResoomerError) {
-    throw new Error(goToResoomerError);
-  }
-
-  const resume = await getResume(page, pdfContent);
-
-  console.log(resume)
-
-
-}
-
+const server = initServer();
 
 try {
-  main();
+  initRoutes({
+    server,
+    controllers,
+  });
 } catch (err) {
   console.log(err);
 }
